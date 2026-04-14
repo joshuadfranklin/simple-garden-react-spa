@@ -75,8 +75,10 @@ App
 │
 ├── Sidebar
 │   ├── DimensionInputs     ← width + length number inputs (inches); shows calculated sq ft
-│   ├── LightFilter         ← three toggle buttons: Direct / Partial / Low
-│   └── PlantChecklist      ← plants filtered to lightFilter, checkbox per plant
+│   ├── LightFilter         ← three toggle buttons: Direct / Partial / Low (filters list display only)
+│   └── PlantChecklist      ← plants whose light matches lightFilter; selected plants from other
+│                              light conditions remain selected but are hidden until their filter is active;
+│                              shows "N selected in other conditions" indicator when applicable
 │
 └── MainPanel
     ├── GardenLayout        ← receives widthIn, lengthIn, selectedPlants[]
@@ -149,6 +151,6 @@ Legend at the bottom: Sow · Grow · Harvest color swatches.
 | Plot too small for any row | Empty grid + "Plot too small for selected plants" message |
 | Selected plants overflow plot | Fitting rows shown in grid; overflow plants listed below in a muted "doesn't fit" section |
 | No plants selected | Layout and calendar show empty states |
-| Light filter removes all selected plants | Selections cleared; empty state shown |
+| Light filter changed | Checklist shows only plants matching new filter; previously selected plants from other light conditions remain selected and appear in the layout/calendar |
 | Invalid URL params on load | Silent fallback to defaults |
 | In-row spacing wider than plot width | Plant count per row = 1 (minimum) |
