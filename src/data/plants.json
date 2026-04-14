@@ -32,7 +32,7 @@
     "calendar": {
       "sow":     [false, false, true,  true,  false, false, false, true,  true,  false, false, false],
       "grow":    [false, false, false, true,  true,  false, false, false, true,  false, false, false],
-      "harvest": [false, false, false, false, true,  true,  false, false, false, true,  false, false]
+      "harvest": [false, false, false, false, true,  true,  false, false, false, true,  true,  false]
     }
   },
   {
@@ -54,7 +54,7 @@
     "inRowSpacingIn": 18,
     "daysToHarvest": "55–65 days",
     "calendar": {
-      "sow":     [false, false, true,  true,  false, false, false, true,  false, false, false, false],
+      "sow":     [false, false, true,  true,  false, false, false, false, false, false, false, false],
       "grow":    [false, false, false, true,  true,  true,  false, true,  true,  false, false, false],
       "harvest": [false, false, false, false, false, true,  true,  false, true,  true,  false, false]
     }
