@@ -1,0 +1,134 @@
+[
+  {
+    "name": "Tomato",
+    "light": "direct",
+    "rowSpacingIn": 48,
+    "inRowSpacingIn": 36,
+    "daysToHarvest": "70–90 days",
+    "calendar": {
+      "sow":     [false, false, true,  true,  false, false, false, true,  true,  false, false, false],
+      "grow":    [false, false, false, true,  true,  true,  false, false, true,  true,  false, false],
+      "harvest": [false, false, false, false, true,  true,  true,  false, false, true,  true,  false]
+    }
+  },
+  {
+    "name": "Pepper",
+    "light": "direct",
+    "rowSpacingIn": 36,
+    "inRowSpacingIn": 18,
+    "daysToHarvest": "60–90 days",
+    "calendar": {
+      "sow":     [false, false, true,  true,  false, false, false, true,  true,  false, false, false],
+      "grow":    [false, false, false, true,  true,  true,  false, false, true,  true,  false, false],
+      "harvest": [false, false, false, false, true,  true,  true,  false, false, true,  true,  false]
+    }
+  },
+  {
+    "name": "Cucumber",
+    "light": "direct",
+    "rowSpacingIn": 60,
+    "inRowSpacingIn": 12,
+    "daysToHarvest": "50–70 days",
+    "calendar": {
+      "sow":     [false, false, true,  true,  false, false, false, true,  true,  false, false, false],
+      "grow":    [false, false, false, true,  true,  false, false, false, true,  false, false, false],
+      "harvest": [false, false, false, false, true,  true,  false, false, false, true,  false, false]
+    }
+  },
+  {
+    "name": "Squash (Summer)",
+    "light": "direct",
+    "rowSpacingIn": 48,
+    "inRowSpacingIn": 24,
+    "daysToHarvest": "50–60 days",
+    "calendar": {
+      "sow":     [false, false, true,  true,  false, false, false, true,  false, false, false, false],
+      "grow":    [false, false, false, true,  true,  false, false, true,  true,  false, false, false],
+      "harvest": [false, false, false, false, true,  true,  false, false, true,  true,  false, false]
+    }
+  },
+  {
+    "name": "Okra",
+    "light": "direct",
+    "rowSpacingIn": 36,
+    "inRowSpacingIn": 18,
+    "daysToHarvest": "55–65 days",
+    "calendar": {
+      "sow":     [false, false, true,  true,  false, false, false, true,  false, false, false, false],
+      "grow":    [false, false, false, true,  true,  true,  false, true,  true,  false, false, false],
+      "harvest": [false, false, false, false, false, true,  true,  false, true,  true,  false, false]
+    }
+  },
+  {
+    "name": "Watermelon",
+    "light": "direct",
+    "rowSpacingIn": 84,
+    "inRowSpacingIn": 60,
+    "daysToHarvest": "80–100 days",
+    "calendar": {
+      "sow":     [false, false, true,  true,  false, false, false, true,  false, false, false, false],
+      "grow":    [false, false, false, true,  true,  true,  false, true,  true,  true,  false, false],
+      "harvest": [false, false, false, false, false, true,  true,  false, false, true,  true,  false]
+    }
+  },
+  {
+    "name": "Carrot",
+    "light": "partial",
+    "rowSpacingIn": 18,
+    "inRowSpacingIn": 2,
+    "daysToHarvest": "70–80 days",
+    "calendar": {
+      "sow":     [true,  true,  false, false, false, false, false, false, true,  false, false, false],
+      "grow":    [false, true,  true,  true,  false, false, false, false, true,  true,  false, false],
+      "harvest": [false, false, false, true,  true,  false, false, false, false, false, true,  false]
+    }
+  },
+  {
+    "name": "Lettuce",
+    "light": "partial",
+    "rowSpacingIn": 18,
+    "inRowSpacingIn": 2,
+    "daysToHarvest": "40–80 days",
+    "calendar": {
+      "sow":     [true,  true,  true,  false, false, false, false, false, true,  false, false, false],
+      "grow":    [false, true,  true,  true,  false, false, false, false, true,  true,  false, false],
+      "harvest": [false, false, true,  true,  true,  false, false, false, false, true,  true,  false]
+    }
+  },
+  {
+    "name": "Spinach",
+    "light": "partial",
+    "rowSpacingIn": 18,
+    "inRowSpacingIn": 3,
+    "daysToHarvest": "40–60 days",
+    "calendar": {
+      "sow":     [true,  true,  false, false, false, false, false, false, true,  true,  false, false],
+      "grow":    [false, true,  true,  false, false, false, false, false, false, true,  true,  false],
+      "harvest": [false, false, true,  true,  false, false, false, false, false, false, true,  true]
+    }
+  },
+  {
+    "name": "Beet",
+    "light": "partial",
+    "rowSpacingIn": 18,
+    "inRowSpacingIn": 2,
+    "daysToHarvest": "50–60 days",
+    "calendar": {
+      "sow":     [true,  true,  false, false, false, false, false, false, true,  true,  false, false],
+      "grow":    [false, true,  true,  false, false, false, false, false, false, true,  true,  false],
+      "harvest": [false, false, true,  true,  false, false, false, false, false, false, true,  true]
+    }
+  },
+  {
+    "name": "Bean (Snap Bush)",
+    "light": "direct",
+    "rowSpacingIn": 36,
+    "inRowSpacingIn": 3,
+    "daysToHarvest": "45–60 days",
+    "calendar": {
+      "sow":     [false, false, true,  true,  false, false, false, false, true,  false, false, false],
+      "grow":    [false, false, false, true,  true,  false, false, false, true,  true,  false, false],
+      "harvest": [false, false, false, false, true,  true,  false, false, false, true,  true,  false]
+    }
+  }
+]
