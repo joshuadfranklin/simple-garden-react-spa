@@ -16,7 +16,7 @@ function getColor(plantName) {
   return PALETTE[hash % PALETTE.length]
 }
 
-export default function GardenLayout({ widthIn, lengthIn, selectedPlants }) {
+export default function GardenLayout({ widthIn, lengthIn, selectedPlants = [] }) {
   if (!selectedPlants.length) {
     return (
       <section className="border rounded p-4 text-sm text-gray-400">
@@ -70,7 +70,7 @@ export default function GardenLayout({ widthIn, lengthIn, selectedPlants }) {
               const heightPct = (row.plant.rowSpacingIn / lengthIn) * 100
               return (
                 <div
-                  key={i}
+                  key={row.rowNumber}
                   style={{
                     height: `${heightPct}%`,
                     backgroundColor: color.bg,
