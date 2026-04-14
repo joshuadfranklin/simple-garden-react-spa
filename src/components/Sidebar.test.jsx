@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, act } from '@testing-library/react'
-import { vi, describe, test, expect, beforeEach } from 'vitest'
+import { vi, describe, test, expect } from 'vitest'
 import Sidebar from './Sidebar.jsx'
 
 const allPlants = [
@@ -34,6 +34,26 @@ describe('Sidebar', () => {
     expect(onUpdate).toHaveBeenCalledWith({ widthIn: 60 })
   })
 
+  test('calls onUpdate with new lengthIn when input changes', () => {
+    const { onUpdate } = renderSidebar()
+    fireEvent.change(screen.getByLabelText(/length/i), { target: { value: '120' } })
+    expect(onUpdate).toHaveBeenCalledWith({ lengthIn: 120 })
+  })
+
+  test('enforces minimum of 10 for both dimension inputs', () => {
+    const { onUpdate } = renderSidebar()
+    fireEvent.change(screen.getByLabelText(/width/i), { target: { value: '5' } })
+    expect(onUpdate).toHaveBeenCalledWith({ widthIn: 10 })
+    fireEvent.change(screen.getByLabelText(/length/i), { target: { value: '0' } })
+    expect(onUpdate).toHaveBeenCalledWith({ lengthIn: 10 })
+  })
+
+  test('clicking a light filter button calls onUpdate with new lightFilter', () => {
+    const { onUpdate } = renderSidebar({ lightFilter: 'direct' })
+    fireEvent.click(screen.getByRole('button', { name: /partial/i }))
+    expect(onUpdate).toHaveBeenCalledWith({ lightFilter: 'partial' })
+  })
+
   test('light filter shows only matching plants', () => {
     renderSidebar({ lightFilter: 'direct' })
     expect(screen.getByLabelText('Tomato')).toBeInTheDocument()
@@ -63,11 +83,13 @@ describe('Sidebar', () => {
     expect(screen.queryByText(/selected in other conditions/)).not.toBeInTheDocument()
   })
 
-  test('Save button shows Copied! then reverts after 2 seconds', async () => {
+  test('Save button copies current URL and shows Copied! then reverts after 2 seconds', async () => {
     vi.useFakeTimers()
-    Object.assign(navigator, { clipboard: { writeText: vi.fn().mockResolvedValue(undefined) } })
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    Object.assign(navigator, { clipboard: { writeText } })
     renderSidebar()
-    fireEvent.click(screen.getByRole('button', { name: /save/i }))
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: /save/i })) })
+    expect(writeText).toHaveBeenCalledWith(window.location.href)
     expect(screen.getByRole('button', { name: /copied/i })).toBeInTheDocument()
     await act(async () => { vi.advanceTimersByTime(2000) })
     expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument()

@@ -18,10 +18,14 @@ export default function Sidebar({ allPlants, widthIn, lengthIn, lightFilter, sel
     })
   }
 
-  function handleSave() {
-    navigator.clipboard.writeText(window.location.href)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+  async function handleSave() {
+    try {
+      await navigator.clipboard.writeText(window.location.href)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // clipboard write failed silently
+    }
   }
 
   return (
