@@ -1,9 +1,9 @@
-export const DEFAULTS = {
+export const DEFAULTS = Object.freeze({
   widthIn: 40,
   lengthIn: 80,
   lightFilter: 'direct',
   selectedPlants: [],
-}
+})
 
 const VALID_LIGHT = ['direct', 'partial', 'low']
 
