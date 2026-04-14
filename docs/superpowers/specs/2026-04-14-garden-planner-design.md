@@ -109,12 +109,13 @@ Invalid or missing params fall back to defaults silently: `w=40`, `l=80`, `light
 
 **Visual style:** Scaled top-down grid. Container aspect ratio matches `widthIn / lengthIn` so the plot is always proportional on screen.
 
-**Row calculation (greedy, top-to-bottom):**
-- Iterate selected plants in checklist order
-- For each plant, add rows of `rowSpacingIn` height until the remaining plot length is exhausted
+**Row calculation (round-robin, top-to-bottom):**
+- Maintain a `usedLengthIn` counter starting at 0
+- Repeat passes through selected plants in checklist order until no row fits:
+  - For each plant in the pass: if `usedLengthIn + rowSpacingIn <= lengthIn`, add a row and increment `usedLengthIn` by `rowSpacingIn`; otherwise skip
+  - A pass where nothing fits ends the loop
 - Row height as percentage of container: `(rowSpacingIn / lengthIn) * 100%`
 - Plant count per row: `Math.floor(widthIn / inRowSpacingIn)`, minimum 1
-- Multiple rows of the same plant are added until the next plant's rows begin
 
 **Visual details:**
 - Each plant has a consistent color (derived from its index in the plants list)
