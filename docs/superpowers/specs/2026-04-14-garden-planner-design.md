@@ -105,6 +105,8 @@ On every state change, `App` calls `history.replaceState` to sync inputs to the 
 
 Invalid or missing params fall back to defaults silently: `w=40`, `l=80`, `light=direct`, no plants selected.
 
+**Save button:** A "Save" button in the sidebar calls `navigator.clipboard.writeText(window.location.href)` and briefly shows a "Copied!" confirmation in place of the button label (reverts after 2 seconds). The URL is already kept current via `history.replaceState` on every state change, so no extra serialization is needed at click time.
+
 ---
 
 ## Garden Layout
