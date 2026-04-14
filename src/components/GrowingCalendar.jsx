@@ -1,5 +1,7 @@
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
+const PHASES = ['sow', 'grow', 'harvest']
+
 const PHASE_COLORS = {
   sow:     '#c8e6c9',
   grow:    '#a5d6a7',
@@ -35,29 +37,33 @@ export default function GrowingCalendar({ selectedPlants = [] }) {
       {/* Plants */}
       {selectedPlants.map(plant => (
         <div key={plant.name} className="mb-4">
-          {(['sow', 'grow', 'harvest']).map((phase, pi) => (
-            <div
-              key={phase}
-              className="grid items-center mb-px"
-              style={{ gridTemplateColumns: '80px 1fr 90px' }}
-            >
-              <span className="text-xs font-semibold text-gray-700 truncate">
-                {pi === 0 ? plant.name : ''}
-              </span>
-              <div className="grid grid-cols-12 gap-px">
-                {plant.calendar[phase].map((active, mi) => (
-                  <div
-                    key={mi}
-                    className="h-2.5 rounded-sm"
-                    style={{ backgroundColor: active ? PHASE_COLORS[phase] : INACTIVE }}
-                  />
-                ))}
+          {PHASES.map((phase, pi) => {
+            const months = plant.calendar?.[phase]
+            if (!months) return null
+            return (
+              <div
+                key={phase}
+                className="grid items-center mb-px"
+                style={{ gridTemplateColumns: '80px 1fr 90px' }}
+              >
+                <span className="text-xs font-semibold text-gray-700 truncate">
+                  {pi === 0 ? plant.name : ''}
+                </span>
+                <div className="grid grid-cols-12 gap-px">
+                  {months.map((active, mi) => (
+                    <div
+                      key={MONTHS[mi]}
+                      className="h-2.5 rounded-sm"
+                      style={{ backgroundColor: active ? PHASE_COLORS[phase] : INACTIVE }}
+                    />
+                  ))}
+                </div>
+                <span className="text-xs text-gray-400 pl-2 truncate">
+                  {phase === 'harvest' ? plant.daysToHarvest : ''}
+                </span>
               </div>
-              <span className="text-xs text-gray-400 pl-2 truncate">
-                {phase === 'harvest' ? plant.daysToHarvest : ''}
-              </span>
-            </div>
-          ))}
+            )
+          })}
         </div>
       ))}
 
