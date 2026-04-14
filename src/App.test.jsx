@@ -9,6 +9,10 @@ vi.mock('./data/plants.json', () => ({
   ],
 }))
 
+afterEach(() => {
+  window.history.replaceState(null, '', '/')
+})
+
 test('renders without crashing', () => {
   render(<App />)
   expect(document.body).toBeTruthy()

@@ -1,3 +1,4 @@
+// STUB: replace entirely in Task 6. Minimal inputs exist only to support App.test.jsx.
 export default function Sidebar({ widthIn, lengthIn, onUpdate }) {
   return (
     <aside className="w-52 border-r">
