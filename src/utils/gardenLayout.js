@@ -1,6 +1,7 @@
 /**
- * Build the ordered list of rows for the garden grid using round-robin allocation.
- * One row per plant per pass; repeats until no row from any plant fits.
+ * Build the ordered list of rows for the garden grid.
+ * One row per entry in selectedPlants (duplicates produce multiple rows).
+ * Rows are allocated in order until the plot length is exhausted.
  *
  * @param {Array<{name: string, rowSpacingIn: number, inRowSpacingIn: number}>} selectedPlants
  * @param {number} widthIn - plot width in inches
@@ -13,26 +14,18 @@ export function buildRows(selectedPlants, widthIn, lengthIn) {
   }
 
   const rows = []
+  const overflowPlants = []
   let usedLengthIn = 0
-  let anyFit = true
 
-  while (anyFit) {
-    anyFit = false
-    // Plants whose rowSpacingIn exceeds the remaining plot space are skipped.
-    // Because usedLengthIn only grows, any plant skipped in pass N will also be
-    // skipped in all subsequent passes. The loop ends when a full pass adds nothing.
-    for (const plant of selectedPlants) {
-      if (usedLengthIn + plant.rowSpacingIn <= lengthIn) {
-        const plantCount = Math.max(1, Math.floor(widthIn / plant.inRowSpacingIn))
-        rows.push({ plant, rowNumber: rows.length + 1, plantCount })
-        usedLengthIn += plant.rowSpacingIn
-        anyFit = true
-      }
+  for (const plant of selectedPlants) {
+    if (usedLengthIn + plant.rowSpacingIn <= lengthIn) {
+      const plantCount = Math.max(1, Math.floor(widthIn / plant.inRowSpacingIn))
+      rows.push({ plant, rowNumber: rows.length + 1, plantCount })
+      usedLengthIn += plant.rowSpacingIn
+    } else {
+      overflowPlants.push(plant)
     }
   }
-
-  const plantsWithRows = new Set(rows.map(r => r.plant.name))
-  const overflowPlants = selectedPlants.filter(p => !plantsWithRows.has(p.name))
 
   return {
     rows,

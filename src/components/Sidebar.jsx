@@ -1,20 +1,40 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
-const LIGHT_OPTIONS = ['direct', 'partial', 'low']
+const LIGHT_OPTIONS = ['direct', 'partial']
 
 export default function Sidebar({ allPlants, widthIn, lengthIn, lightFilter, selectedPlants, onUpdate }) {
   const [copied, setCopied] = useState(false)
+  const [widthStr, setWidthStr] = useState(String(widthIn))
+  const [lengthStr, setLengthStr] = useState(String(lengthIn))
+
+  useEffect(() => { setWidthStr(String(widthIn)) }, [widthIn])
+  useEffect(() => { setLengthStr(String(lengthIn)) }, [lengthIn])
+
+  function commitWidth(raw) {
+    const v = Math.max(10, parseInt(raw, 10) || 10)
+    setWidthStr(String(v))
+    onUpdate({ widthIn: v })
+  }
+
+  function commitLength(raw) {
+    const v = Math.max(10, parseInt(raw, 10) || 10)
+    setLengthStr(String(v))
+    onUpdate({ lengthIn: v })
+  }
 
   const sqFt = ((widthIn * lengthIn) / 144).toFixed(1)
   const visiblePlants = allPlants.filter(p => p.light === lightFilter)
   const otherSelectedCount = selectedPlants.filter(p => p.light !== lightFilter).length
 
-  function togglePlant(plant) {
-    const isSelected = selectedPlants.some(p => p.name === plant.name)
-    onUpdate({
-      selectedPlants: isSelected
-        ? selectedPlants.filter(p => p.name !== plant.name)
-        : [...selectedPlants, plant],
+  function addPlant(plant) {
+    onUpdate(prev => ({ ...prev, selectedPlants: [...prev.selectedPlants, plant] }))
+  }
+
+  function removePlant(plant) {
+    onUpdate(prev => {
+      const idx = prev.selectedPlants.findLastIndex(p => p.name === plant.name)
+      if (idx === -1) return prev
+      return { ...prev, selectedPlants: prev.selectedPlants.filter((_, i) => i !== idx) }
     })
   }
 
@@ -36,25 +56,27 @@ export default function Sidebar({ allPlants, widthIn, lengthIn, lightFilter, sel
         </h2>
         <div className="flex gap-2 items-end mb-1">
           <label className="flex-1">
-            <span className="text-xs text-gray-500 block mb-1">Width</span>
+            <span className="text-xs text-gray-500 block mb-1">Width ″</span>
             <input
               aria-label="Width"
               type="number"
-              value={widthIn}
+              value={widthStr}
               min={10}
-              onChange={e => onUpdate({ widthIn: Math.max(10, parseInt(e.target.value) || 10) })}
+              onChange={e => setWidthStr(e.target.value)}
+              onBlur={e => commitWidth(e.target.value)}
               className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
             />
           </label>
           <span className="text-gray-400 mb-2 text-sm">×</span>
           <label className="flex-1">
-            <span className="text-xs text-gray-500 block mb-1">Length</span>
+            <span className="text-xs text-gray-500 block mb-1">Length ″</span>
             <input
               aria-label="Length"
               type="number"
-              value={lengthIn}
+              value={lengthStr}
               min={10}
-              onChange={e => onUpdate({ lengthIn: Math.max(10, parseInt(e.target.value) || 10) })}
+              onChange={e => setLengthStr(e.target.value)}
+              onBlur={e => commitLength(e.target.value)}
               className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
             />
           </label>
@@ -87,18 +109,32 @@ export default function Sidebar({ allPlants, widthIn, lengthIn, lightFilter, sel
         <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">
           Plants <span className="font-normal capitalize">({lightFilter})</span>
         </h2>
-        <div className="flex flex-col gap-2">
-          {visiblePlants.map(plant => (
-            <label key={plant.name} className="flex items-center gap-2 cursor-pointer text-sm">
-              <input
-                type="checkbox"
-                aria-label={plant.name}
-                checked={selectedPlants.some(p => p.name === plant.name)}
-                onChange={() => togglePlant(plant)}
-              />
-              {plant.name}
-            </label>
-          ))}
+        <div className="flex flex-col gap-1.5">
+          {visiblePlants.map(plant => {
+            const count = selectedPlants.filter(p => p.name === plant.name).length
+            return (
+              <div key={plant.name} className="flex items-center gap-1 text-sm">
+                <span
+                  className="flex-1 truncate"
+                  title={`Spacing in Row: ${plant.inRowSpacingIn}″\nBetween Rows: ${plant.rowSpacingIn}″\nDays to Harvest: ${plant.daysToHarvest}`}
+                >{plant.name}</span>
+                {count > 0 && (
+                  <span className="text-xs text-gray-500 w-4 text-center tabular-nums">{count}</span>
+                )}
+                <button
+                  aria-label={`Remove ${plant.name}`}
+                  onClick={() => removePlant(plant)}
+                  disabled={count === 0}
+                  className="w-5 h-5 rounded text-xs font-bold leading-none bg-gray-200 hover:bg-gray-300 disabled:opacity-30 disabled:cursor-not-allowed"
+                >−</button>
+                <button
+                  aria-label={`Add ${plant.name}`}
+                  onClick={() => addPlant(plant)}
+                  className="w-5 h-5 rounded text-xs font-bold leading-none bg-green-100 hover:bg-green-200 text-green-700"
+                >+</button>
+              </div>
+            )
+          })}
           {visiblePlants.length === 0 && (
             <p className="text-xs text-gray-400 italic">No plants for this condition</p>
           )}
@@ -114,7 +150,7 @@ export default function Sidebar({ allPlants, widthIn, lengthIn, lightFilter, sel
         onClick={handleSave}
         className="w-full py-1.5 rounded bg-green-600 text-white text-sm font-medium hover:bg-green-700"
       >
-        {copied ? 'Copied!' : 'Save'}
+        {copied ? 'Copied!' : 'Save Link'}
       </button>
     </aside>
   )

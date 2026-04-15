@@ -16,12 +16,22 @@ describe('serializeState', () => {
     expect(params.get('w')).toBe('40')
     expect(params.get('l')).toBe('80')
     expect(params.get('light')).toBe('direct')
-    expect(params.get('plants')).toBe('Tomato,Pepper')
+    expect(params.get('plants')).toBe('Tomato-Pepper')
   })
 
   test('omits plants param when none selected', () => {
-    const params = serializeState({ widthIn: 40, lengthIn: 80, lightFilter: 'partial', selectedPlants: [] })
+    const params = serializeState({ widthIn: 40, lengthIn: 80, lightFilter: 'partial', selectedPlants: [], title: 'Simple Garden' })
     expect(params.has('plants')).toBe(false)
+  })
+
+  test('omits title param when it matches the default', () => {
+    const params = serializeState({ widthIn: 40, lengthIn: 80, lightFilter: 'direct', selectedPlants: [], title: 'Simple Garden' })
+    expect(params.has('title')).toBe(false)
+  })
+
+  test('includes title param when it differs from default', () => {
+    const params = serializeState({ widthIn: 40, lengthIn: 80, lightFilter: 'direct', selectedPlants: [], title: 'My Herb Garden' })
+    expect(params.get('title')).toBe('My Herb Garden')
   })
 })
 
@@ -42,6 +52,12 @@ describe('deserializeState', () => {
     expect(state.lengthIn).toBe(DEFAULTS.lengthIn)
     expect(state.lightFilter).toBe(DEFAULTS.lightFilter)
     expect(state.selectedPlants).toEqual([])
+    expect(state.title).toBe(DEFAULTS.title)
+  })
+
+  test('restores custom title from URL', () => {
+    const state = deserializeState('title=My+Herb+Garden', allPlants)
+    expect(state.title).toBe('My Herb Garden')
   })
 
   test('falls back to defaults for invalid light value', () => {
@@ -56,13 +72,13 @@ describe('deserializeState', () => {
   })
 
   test('filters out unknown plant names silently', () => {
-    const state = deserializeState('plants=Tomato,UnknownPlant', allPlants)
+    const state = deserializeState('plants=Tomato-UnknownPlant', allPlants)
     expect(state.selectedPlants).toHaveLength(1)
     expect(state.selectedPlants[0].name).toBe('Tomato')
   })
 
   test('handles plants from different light conditions', () => {
-    const state = deserializeState('plants=Tomato,Lettuce', allPlants)
+    const state = deserializeState('plants=Tomato-Lettuce', allPlants)
     expect(state.selectedPlants).toHaveLength(2)
   })
 

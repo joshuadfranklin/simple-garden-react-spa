@@ -16,10 +16,9 @@ describe('GardenLayout', () => {
     expect(screen.getByText(/too small/i)).toBeInTheDocument()
   })
 
-  test('renders a row for each allocated row', () => {
-    // 80" / 18" = 4 rows of tomato
-    render(<GardenLayout widthIn={40} lengthIn={80} selectedPlants={[tomato]} />)
-    expect(screen.getAllByText(/tomato/i)).toHaveLength(4)
+  test('renders one row per selectedPlants entry', () => {
+    render(<GardenLayout widthIn={40} lengthIn={80} selectedPlants={[tomato, tomato]} />)
+    expect(screen.getAllByText(/tomato/i)).toHaveLength(2)
   })
 
   test('shows overflow plant in doesnt-fit section', () => {
@@ -29,15 +28,14 @@ describe('GardenLayout', () => {
   })
 
   test('shows unused inches label when space remains', () => {
-    // 80" - (4 * 18") = 8" unused
-    render(<GardenLayout widthIn={40} lengthIn={80} selectedPlants={[tomato]} />)
-    expect(screen.getByText(/8.*unused/i)).toBeInTheDocument()
+    // 80" - (2 * 18") = 44" unused
+    render(<GardenLayout widthIn={40} lengthIn={80} selectedPlants={[tomato, tomato]} />)
+    expect(screen.getByText(/44.*unused/i)).toBeInTheDocument()
   })
 
-  test('container has correct aspect-ratio style', () => {
-    const { container } = render(<GardenLayout widthIn={40} lengthIn={80} selectedPlants={[tomato]} />)
-    const grid = container.querySelector('[style*="aspect-ratio"]')
-    expect(grid).not.toBeNull()
-    expect(grid.style.aspectRatio).toBe('40 / 80')
+  test('each row has fixed height class', () => {
+    const { container } = render(<GardenLayout widthIn={40} lengthIn={80} selectedPlants={[tomato, tomato]} />)
+    const rows = container.querySelectorAll('.h-6')
+    expect(rows.length).toBe(2)
   })
 })

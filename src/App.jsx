@@ -10,15 +10,19 @@ export default function App() {
     deserializeState(window.location.search, plants)
   )
 
-  const { widthIn, lengthIn, lightFilter, selectedPlants } = state
+  const { widthIn, lengthIn, lightFilter, selectedPlants, title } = state
 
   useEffect(() => {
     const params = serializeState(state)
     history.replaceState(null, '', `?${params}`)
   }, [state])
 
-  function update(patch) {
-    setState(prev => ({ ...prev, ...patch }))
+  function update(patchOrFn) {
+    if (typeof patchOrFn === 'function') {
+      setState(patchOrFn)
+    } else {
+      setState(prev => ({ ...prev, ...patchOrFn }))
+    }
   }
 
   return (
@@ -32,6 +36,12 @@ export default function App() {
         onUpdate={update}
       />
       <main className="flex-1 flex flex-col overflow-auto p-4 gap-6">
+        <input
+          aria-label="Garden title"
+          value={title}
+          onChange={e => update({ title: e.target.value })}
+          className="text-2xl font-bold text-gray-800 bg-transparent border-b border-transparent hover:border-gray-300 focus:border-gray-400 focus:outline-none w-full"
+        />
         <GardenLayout
           widthIn={widthIn}
           lengthIn={lengthIn}

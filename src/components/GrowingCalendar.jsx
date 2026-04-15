@@ -34,8 +34,8 @@ export default function GrowingCalendar({ selectedPlants = [] }) {
         <span />
       </div>
 
-      {/* Plants */}
-      {selectedPlants.map(plant => (
+      {/* Plants — deduplicated since calendar is the same regardless of count */}
+      {selectedPlants.filter((p, i, arr) => arr.findIndex(q => q.name === p.name) === i).map(plant => (
         <div key={plant.name} className="mb-4">
           {PHASES.map((phase, pi) => {
             const months = plant.calendar?.[phase]

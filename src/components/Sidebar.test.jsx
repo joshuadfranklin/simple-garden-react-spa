@@ -24,27 +24,36 @@ function renderSidebar(overrides = {}) {
 describe('Sidebar', () => {
   test('shows sq ft calculated from dimensions', () => {
     renderSidebar({ widthIn: 40, lengthIn: 80 })
-    // 40 * 80 / 144 = 22.2
     expect(screen.getByText(/22\.2 sq ft/)).toBeInTheDocument()
   })
 
-  test('calls onUpdate with new widthIn when input changes', () => {
+  test('calls onUpdate with new widthIn on blur', () => {
     const { onUpdate } = renderSidebar()
-    fireEvent.change(screen.getByLabelText(/width/i), { target: { value: '60' } })
+    const input = screen.getByLabelText(/width/i)
+    fireEvent.change(input, { target: { value: '60' } })
+    expect(onUpdate).not.toHaveBeenCalled()
+    fireEvent.blur(input)
     expect(onUpdate).toHaveBeenCalledWith({ widthIn: 60 })
   })
 
-  test('calls onUpdate with new lengthIn when input changes', () => {
+  test('calls onUpdate with new lengthIn on blur', () => {
     const { onUpdate } = renderSidebar()
-    fireEvent.change(screen.getByLabelText(/length/i), { target: { value: '120' } })
+    const input = screen.getByLabelText(/length/i)
+    fireEvent.change(input, { target: { value: '120' } })
+    expect(onUpdate).not.toHaveBeenCalled()
+    fireEvent.blur(input)
     expect(onUpdate).toHaveBeenCalledWith({ lengthIn: 120 })
   })
 
-  test('enforces minimum of 10 for both dimension inputs', () => {
+  test('enforces minimum of 10 for both dimension inputs on blur', () => {
     const { onUpdate } = renderSidebar()
-    fireEvent.change(screen.getByLabelText(/width/i), { target: { value: '5' } })
+    const widthInput = screen.getByLabelText(/width/i)
+    fireEvent.change(widthInput, { target: { value: '5' } })
+    fireEvent.blur(widthInput)
     expect(onUpdate).toHaveBeenCalledWith({ widthIn: 10 })
-    fireEvent.change(screen.getByLabelText(/length/i), { target: { value: '0' } })
+    const lengthInput = screen.getByLabelText(/length/i)
+    fireEvent.change(lengthInput, { target: { value: '0' } })
+    fireEvent.blur(lengthInput)
     expect(onUpdate).toHaveBeenCalledWith({ lengthIn: 10 })
   })
 
@@ -56,31 +65,48 @@ describe('Sidebar', () => {
 
   test('light filter shows only matching plants', () => {
     renderSidebar({ lightFilter: 'direct' })
-    expect(screen.getByLabelText('Tomato')).toBeInTheDocument()
-    expect(screen.getByLabelText('Pepper')).toBeInTheDocument()
-    expect(screen.queryByLabelText('Lettuce')).not.toBeInTheDocument()
+    expect(screen.getByText('Tomato')).toBeInTheDocument()
+    expect(screen.getByText('Pepper')).toBeInTheDocument()
+    expect(screen.queryByText('Lettuce')).not.toBeInTheDocument()
   })
 
-  test('clicking a plant checkbox calls onUpdate with updated selectedPlants', () => {
-    const { onUpdate } = renderSidebar({ lightFilter: 'direct', selectedPlants: [] })
-    fireEvent.click(screen.getByLabelText('Tomato'))
-    expect(onUpdate).toHaveBeenCalledWith({ selectedPlants: [allPlants[0]] })
+  test('Add button appends plant to selectedPlants', () => {
+    const { onUpdate } = renderSidebar({ selectedPlants: [] })
+    fireEvent.click(screen.getByRole('button', { name: /add tomato/i }))
+    expect(onUpdate).toHaveBeenCalledWith(expect.any(Function))
+    const updater = onUpdate.mock.calls[0][0]
+    expect(updater({ selectedPlants: [] })).toMatchObject({ selectedPlants: [allPlants[0]] })
   })
 
-  test('unchecking a selected plant removes it from selectedPlants', () => {
-    const { onUpdate } = renderSidebar({ lightFilter: 'direct', selectedPlants: [allPlants[0]] })
-    fireEvent.click(screen.getByLabelText('Tomato'))
-    expect(onUpdate).toHaveBeenCalledWith({ selectedPlants: [] })
+  test('Add button can add same plant multiple times', () => {
+    const { onUpdate } = renderSidebar({ selectedPlants: [allPlants[0]] })
+    fireEvent.click(screen.getByRole('button', { name: /add tomato/i }))
+    expect(onUpdate).toHaveBeenCalledWith(expect.any(Function))
+    const updater = onUpdate.mock.calls[0][0]
+    expect(updater({ selectedPlants: [allPlants[0]] })).toMatchObject({ selectedPlants: [allPlants[0], allPlants[0]] })
+  })
+
+  test('Remove button removes one instance of the plant', () => {
+    const { onUpdate } = renderSidebar({ selectedPlants: [allPlants[0], allPlants[0]] })
+    fireEvent.click(screen.getByRole('button', { name: /remove tomato/i }))
+    expect(onUpdate).toHaveBeenCalledWith(expect.any(Function))
+    const updater = onUpdate.mock.calls[0][0]
+    expect(updater({ selectedPlants: [allPlants[0], allPlants[0]] })).toMatchObject({ selectedPlants: [allPlants[0]] })
+  })
+
+  test('Remove button is disabled when count is 0', () => {
+    renderSidebar({ selectedPlants: [] })
+    expect(screen.getByRole('button', { name: /remove tomato/i })).toBeDisabled()
   })
 
   test('shows "N selected in other conditions" when plants from other filters are selected', () => {
-    renderSidebar({ lightFilter: 'direct', selectedPlants: [allPlants[2]] }) // Lettuce is partial
+    renderSidebar({ lightFilter: 'direct', selectedPlants: [allPlants[2]] })
     expect(screen.getByText(/1 selected in other conditions/)).toBeInTheDocument()
   })
 
-  test('does not show other-conditions indicator when all selected match current filter', () => {
-    renderSidebar({ lightFilter: 'direct', selectedPlants: [allPlants[0]] })
-    expect(screen.queryByText(/selected in other conditions/)).not.toBeInTheDocument()
+  test('counts multiple instances in other-conditions indicator', () => {
+    renderSidebar({ lightFilter: 'direct', selectedPlants: [allPlants[2], allPlants[2]] })
+    expect(screen.getByText(/2 selected in other conditions/)).toBeInTheDocument()
   })
 
   test('Save button copies current URL and shows Copied! then reverts after 2 seconds', async () => {
@@ -88,11 +114,11 @@ describe('Sidebar', () => {
     const writeText = vi.fn().mockResolvedValue(undefined)
     Object.assign(navigator, { clipboard: { writeText } })
     renderSidebar()
-    await act(async () => { fireEvent.click(screen.getByRole('button', { name: /save/i })) })
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: /save link/i })) })
     expect(writeText).toHaveBeenCalledWith(window.location.href)
     expect(screen.getByRole('button', { name: /copied/i })).toBeInTheDocument()
     await act(async () => { vi.advanceTimersByTime(2000) })
-    expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /save link/i })).toBeInTheDocument()
     vi.useRealTimers()
   })
 })

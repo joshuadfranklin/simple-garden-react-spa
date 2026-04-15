@@ -3,21 +3,25 @@ export const DEFAULTS = Object.freeze({
   lengthIn: 80,
   lightFilter: 'direct',
   selectedPlants: [],
+  title: 'Simple Garden',
 })
 
-const VALID_LIGHT = ['direct', 'partial', 'low']
+const VALID_LIGHT = ['direct', 'partial']
 
 /**
  * @param {{ widthIn: number, lengthIn: number, lightFilter: string, selectedPlants: Array }} state
  * @returns {URLSearchParams}
  */
-export function serializeState({ widthIn, lengthIn, lightFilter, selectedPlants }) {
+export function serializeState({ widthIn, lengthIn, lightFilter, selectedPlants, title }) {
   const params = new URLSearchParams()
   params.set('w', String(widthIn))
   params.set('l', String(lengthIn))
   params.set('light', lightFilter)
   if (selectedPlants.length > 0) {
-    params.set('plants', selectedPlants.map(p => p.name).join(','))
+    params.set('plants', selectedPlants.map(p => p.name).join('-'))
+  }
+  if (title && title !== DEFAULTS.title) {
+    params.set('title', title)
   }
   return params
 }
@@ -42,10 +46,13 @@ export function deserializeState(search, allPlants) {
   let selectedPlants = []
   if (plantsRaw) {
     selectedPlants = plantsRaw
-      .split(',')
+      .split('-')
       .map(name => allPlants.find(p => p.name === name.trim()))
       .filter(Boolean)
   }
 
-  return { widthIn, lengthIn, lightFilter, selectedPlants }
+  const titleRaw = params.get('title')
+  const title = titleRaw && titleRaw.trim() ? titleRaw.trim() : DEFAULTS.title
+
+  return { widthIn, lengthIn, lightFilter, selectedPlants, title }
 }
