@@ -99,6 +99,9 @@ export default function Sidebar({ allPlants, widthIn, lengthIn, lightFilter, sel
               {plant.name}
             </label>
           ))}
+          {visiblePlants.length === 0 && (
+            <p className="text-xs text-gray-400 italic">No plants for this condition</p>
+          )}
         </div>
         {otherSelectedCount > 0 && (
           <p className="text-xs text-gray-400 mt-3">

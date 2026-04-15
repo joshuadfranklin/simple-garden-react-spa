@@ -18,8 +18,9 @@ export function buildRows(selectedPlants, widthIn, lengthIn) {
 
   while (anyFit) {
     anyFit = false
-    // Plants that cannot fit in a given pass are skipped.
-    // They may be reconsidered in the next pass if other plants consumed space first.
+    // Plants whose rowSpacingIn exceeds the remaining plot space are skipped.
+    // Because usedLengthIn only grows, any plant skipped in pass N will also be
+    // skipped in all subsequent passes. The loop ends when a full pass adds nothing.
     for (const plant of selectedPlants) {
       if (usedLengthIn + plant.rowSpacingIn <= lengthIn) {
         const plantCount = Math.max(1, Math.floor(widthIn / plant.inRowSpacingIn))
