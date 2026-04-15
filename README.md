@@ -1,6 +1,9 @@
 # Simple Garden React SPA
 
-A browser-based garden planner. Pick plants, set your plot size, and see a row layout with a growing calendar.
+A browser-based simple garden planner. Pick plants, set your plot size, and see a row layout with a growing calendar.
+
+Try out our [example](https://joshuadfranklin.github.io/simple-garden-react-spa/?w=41&l=76&light=partial&plants=Carrot-Carrot-Lettuce-Spinach&title=Spring+2026+Simple+Garden)
+or create one yourself at https://joshuadfranklin.github.io/simple-garden-react-spa/
 
 ## Features
 
